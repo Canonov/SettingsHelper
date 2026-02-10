@@ -1,10 +1,8 @@
-﻿using RimWorld;
-using Verse;
-using UnityEngine;
+﻿using UnityEngine;
 
 #if DEBUG
 
-namespace ColourPicker
+namespace SettingsHelper.ColorPicker.Debugging
 {
     class MainTabWindow_ColourPicker : MainTabWindow
     {

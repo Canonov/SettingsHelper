@@ -2,8 +2,8 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <!-- Assembly Info -->
   <PropertyGroup>
-    <RootNamespace>Canon.SettingsHelper</RootNamespace>
-    <AssemblyName>00_SettingsHelper</AssemblyName>
+    <RootNamespace>SettingsHelper</RootNamespace>
+    <AssemblyName>SettingsHelper</AssemblyName>
     <AssemblyTitle>Settings Helper</AssemblyTitle>
     <Copyright>Copyright ©Aaron C Robinson 2017 ©Canonov 2026</Copyright>
     <Authors>Aaron C Robinson, Canonov</Authors>
