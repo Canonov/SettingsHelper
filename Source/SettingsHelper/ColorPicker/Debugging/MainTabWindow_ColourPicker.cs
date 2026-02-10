@@ -2,29 +2,28 @@
 
 #if DEBUG
 
-namespace SettingsHelper.ColorPicker.Debugging
+namespace SettingsHelper.ColorPicker.Debugging;
+
+internal class MainTabWindow_ColourPicker : MainTabWindow
 {
-    class MainTabWindow_ColourPicker : MainTabWindow
+    private readonly Color _bgColor = Color.grey;
+    private Texture2D _bgTex;
+
+    public MainTabWindow_ColourPicker()
     {
-        public Color    BGCol;
-        public Texture2D        BGTex;
+        _bgTex = SolidColorMaterials.NewSolidColorTexture(_bgColor);
+    }
 
-        public MainTabWindow_ColourPicker()
+    public override void DoWindowContents(Rect inRect)
+    {
+        GUI.DrawTexture(inRect, _bgTex);
+        var buttonRect = new Rect(0f, 0f, 200f, 35f);
+        buttonRect = buttonRect.CenteredOnXIn(inRect).CenteredOnXIn(inRect);
+
+        if (Widgets.ButtonText(buttonRect, "Change Colour"))
         {
-            BGCol = Color.grey;
-            BGTex = SolidColorMaterials.NewSolidColorTexture( BGCol );
-        }
-
-        public override void DoWindowContents( Rect inRect )
-        {
-            GUI.DrawTexture( inRect, BGTex );
-            Rect button = new Rect(0f, 0f, 200f, 35f);
-            button = button.CenteredOnXIn( inRect ).CenteredOnXIn( inRect );
-
-            if (Widgets.ButtonText( button, "Change Colour" ) )
-            {
-                Find.WindowStack.Add( new Dialog_ColourPicker( BGCol, colour => BGTex = SolidColorMaterials.NewSolidColorTexture( colour ) ) );
-            }
+            Find.WindowStack.Add(new Dialog_ColourPicker(_bgColor,
+                color => _bgTex = SolidColorMaterials.NewSolidColorTexture(color)));
         }
     }
 }
