@@ -9,8 +9,7 @@ namespace SettingsHelper;
 public delegate void WindowContentsHandler(Rect inRect);
 
 /// <summary>
-/// A generic RimWorld <see cref="Window"/> that delegates its content drawing to a <see cref="WindowContentsHandler"/>.
-/// Includes a close button, close X, forces pause, and absorbs input around the window.
+/// A <see cref="Window"/> that delegates its content drawing to a <see cref="WindowContentsHandler"/> Delegate.
 /// </summary>
 public class SettingsWindow : Window
 {
@@ -28,11 +27,9 @@ public class SettingsWindow : Window
         absorbInputAroundWindow = true;
         doWindowContentsDelegate = handler;
     }
-
-    /// <summary>Gets the initial window size (900x700).</summary>
+    
     public override Vector2 InitialSize => new Vector2(900f, 700f);
 
-    /// <inheritdoc />
     public override void DoWindowContents(Rect inRect) => this.doWindowContentsDelegate(inRect);
 }
 
