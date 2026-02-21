@@ -13,7 +13,7 @@ A helper library for RimWorld mod developers that simplifies building mod settin
 
 ## Getting Started
 
-See the [Getting Started](https://github.com/Canonov/SettingsHelper/wiki/Getting-Started) wiki page for a step-by-step guide, or browse the full [API Reference](https://github.com/Canonov/SettingsHelper/wiki/API-Reference).
+See the [Getting Started](https://github.com/Canonov/SettingsHelper/wiki/1\)-Getting-Started) wiki page for a step-by-step guide, or browse the full [API Reference](https://github.com/Canonov/SettingsHelper/wiki/API-Reference).
 
 ## Acknowledgements
 
