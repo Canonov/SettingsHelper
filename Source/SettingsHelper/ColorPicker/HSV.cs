@@ -5,14 +5,10 @@ namespace SettingsHelper.ColorPicker;
 class HSV
 {
     /// <summary>
-    /// From http://answers.unity3d.com/questions/701956/hsv-to-rgb-without-editorguiutilityhsvtorgb.html
+    /// Convert a HSV(A) value to RGBA
     /// </summary>
-    /// <param name="H"></param>
-    /// <param name="S"></param>
-    /// <param name="V"></param>
-    /// <param name="a"></param>
-    /// <returns></returns>
-    public static Color ToRGBA( float H, float S, float V, float A = 1f )
+    /// <remarks>From http://answers.unity3d.com/questions/701956/hsv-to-rgb-without-editorguiutilityhsvtorgb.html</remarks>
+    public static Color ToRGBA(float H, float S, float V, float A = 1f )
     {
         if( S == 0f )
             return new Color( V, V, V, A );

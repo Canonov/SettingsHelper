@@ -2,13 +2,15 @@
 
 namespace SettingsHelper.ColorPicker;
 
+// TODO implicit/explicit conversions?
+
 /// <summary>
 /// This class exists only to have a reference type for Color.
 /// </summary>
 public class ColorWrapper
 {
     public Color Color { get; set; }
-
+    
     public ColorWrapper( Color color )
     {
         Color = color;

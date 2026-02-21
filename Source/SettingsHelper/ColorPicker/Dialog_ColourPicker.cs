@@ -1,8 +1,12 @@
-﻿using System.Globalization;
+using System.Globalization;
 using UnityEngine;
 
 namespace SettingsHelper.ColorPicker;
 
+/// <summary>
+/// A full-featured HSV color picker dialog window with saturation/value picker,
+/// hue and alpha sliders, hex input, and color preview.
+/// </summary>
 public class Dialog_ColourPicker : Window
 {
     enum controls
@@ -42,22 +46,23 @@ public class Dialog_ColourPicker : Window
         _hexIn;
     private Action<Color> _callback;
 
-    // the colour we're going to pass out if requested
+    /// <summary>The confirmed/applied color that will be passed out via the callback.</summary>
     public Color        curColour                  = Color.blue;
 
-    // used in the picker only
+    /// <summary>The working/preview color currently shown in the picker before confirmation.</summary>
     public Color        tempColour              = Color.white;
 
     private Vector2? _initialPosition;
 
+    /// <summary>Gets the initial screen position of the dialog window.</summary>
     public Vector2 InitialPosition => _initialPosition ?? new Vector2( UI.screenWidth - InitialSize.x, UI.screenHeight - InitialSize.y ) / 2f;
-        
+
     /// <summary>
-    /// Call with a ColourWrapper object containing the colour to be changed, with an optional callback which is called when Apply or OK are clicked.
-    /// Setting draggable = true will break sliders for now.
+    /// Creates a new color picker dialog.
     /// </summary>
-    /// <param name="colour"></param>
-    /// <param name="callback"></param>
+    /// <param name="color">The initial color to edit.</param>
+    /// <param name="callback">Optional callback invoked with the selected color when Apply or OK are clicked.</param>
+    /// <param name="position">Optional initial screen position for the dialog.</param>
     public Dialog_ColourPicker ( Color color, Action<Color> callback = null, Vector2? position = null )
     {
         // TODO: figure out if sliders and draggable = true can coexist.
@@ -69,6 +74,7 @@ public class Dialog_ColourPicker : Window
         NotifyRGBUpdated();
     }
 
+    /// <summary>Gets the conversion factor from pixel position to HSV unit value (0-1 range).</summary>
     public float UnitsPerPixel
     {
         get
@@ -79,7 +85,8 @@ public class Dialog_ColourPicker : Window
             return _unitsPerPixel;
         }
     }
-        
+
+    /// <summary>Gets or sets the hue component (0-1). Setting triggers texture regeneration.</summary>
     public float H
     {
         get
@@ -95,6 +102,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets or sets the saturation component (0-1). Setting triggers texture regeneration.</summary>
     public float S
     {
         get
@@ -109,6 +117,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets or sets the value/brightness component (0-1). Setting triggers texture regeneration.</summary>
     public float V
     {
         get
@@ -123,6 +132,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets or sets the alpha component (0-1). Setting triggers texture regeneration.</summary>
     public float A
     {
         get
@@ -137,6 +147,9 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>
+    /// Updates <see cref="tempColour"/> and preview textures from the current H, S, V, A values.
+    /// </summary>
     public void NotifyHSVUpdated()
     {
         tempColour = HSV.ToRGBA( H, S, V );
@@ -145,6 +158,9 @@ public class Dialog_ColourPicker : Window
         _hexOut = _hexIn = RGBtoHex( tempColour );
     }
 
+    /// <summary>
+    /// Derives H, S, V from <see cref="tempColour"/> and rebuilds all picker textures and slider positions.
+    /// </summary>
     public void NotifyRGBUpdated()
     {
         // Set HSV from RGB
@@ -167,6 +183,9 @@ public class Dialog_ColourPicker : Window
         _hexOut = _hexIn = RGBtoHex( tempColour );
     }
 
+    /// <summary>
+    /// Applies <see cref="tempColour"/> to <see cref="curColour"/> and invokes the callback.
+    /// </summary>
     public void SetColor()
     {
         curColour = tempColour;
@@ -174,6 +193,7 @@ public class Dialog_ColourPicker : Window
         CreatePreviewBG( ref _previewBG, tempColour );
     }
 
+    /// <summary>Gets the lazily-initialized saturation/value picker background texture.</summary>
     public Texture2D ColourPickerBG
     {
         get
@@ -186,6 +206,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets the lazily-initialized hue slider background texture.</summary>
     public Texture2D HuePickerBG
     {
         get
@@ -198,6 +219,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets the lazily-initialized alpha slider background texture.</summary>
     public Texture2D AlphaPickerBG
     {
         get
@@ -210,6 +232,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets the lazily-initialized preview texture for the working color.</summary>
     public Texture2D TempPreviewBG
     {
         get
@@ -222,6 +245,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets the lazily-initialized preview texture for the confirmed color.</summary>
     public Texture2D PreviewBG
     {
         get
@@ -234,6 +258,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets the lazily-initialized checkerboard alpha background for the picker area.</summary>
     public Texture2D PickerAlphaBG
     {
         get
@@ -247,6 +272,7 @@ public class Dialog_ColourPicker : Window
     }
 
 
+    /// <summary>Gets the lazily-initialized checkerboard alpha background for sliders.</summary>
     public Texture2D SliderAlphaBG
     {
         get
@@ -259,6 +285,7 @@ public class Dialog_ColourPicker : Window
         }
     }
 
+    /// <summary>Gets the lazily-initialized checkerboard alpha background for the preview area.</summary>
     public Texture2D PreviewAlphaBG
     {
         get
@@ -347,7 +374,7 @@ public class Dialog_ColourPicker : Window
         for( int i = 0; i < bgB.Length; i++ ) bgB[i] = _alphaBGColorB;
 
         // set blocks of pixels at a time
-        // this also sets border blocks, meaning it'll try to set out of bounds pixels. 
+        // this also sets border blocks, meaning it'll try to set out of bounds pixels.
         int row = 0;
         for( int x = 0; x < width; x = x + _alphaBGBlockSize )
         {
@@ -364,14 +391,23 @@ public class Dialog_ColourPicker : Window
         SwapTexture( ref bg, tex );
     }
 
+    /// <summary>
+    /// Creates a solid color preview texture.
+    /// </summary>
+    /// <param name="bg">Reference to the texture to replace.</param>
+    /// <param name="col">The color to fill the texture with.</param>
     public void CreatePreviewBG( ref Texture2D bg, Color col )
     {
         SwapTexture( ref bg, SolidColorMaterials.NewSolidColorTexture( col ) );
     }
 
+    /// <summary>
+    /// Handles user interaction with the saturation/value picker area.
+    /// </summary>
+    /// <param name="pos">The mouse position relative to the picker rect.</param>
     public void PickerAction( Vector2 pos )
     {
-        // if we set S, V via properties these will be called twice. 
+        // if we set S, V via properties these will be called twice.
         _S = UnitsPerPixel * pos.x;
         _V = 1 - UnitsPerPixel * pos.y;
 
@@ -380,6 +416,10 @@ public class Dialog_ColourPicker : Window
         _position = pos;
     }
 
+    /// <summary>
+    /// Handles user interaction with the hue slider.
+    /// </summary>
+    /// <param name="pos">The vertical position within the hue slider.</param>
     public void HueAction( float pos )
     {
         // only changing one value, property should work fine
@@ -387,6 +427,10 @@ public class Dialog_ColourPicker : Window
         _huePosition = pos;
     }
 
+    /// <summary>
+    /// Handles user interaction with the alpha slider.
+    /// </summary>
+    /// <param name="pos">The vertical position within the alpha slider.</param>
     public void AlphaAction( float pos )
     {
         // only changing one value, property should work fine
@@ -394,6 +438,7 @@ public class Dialog_ColourPicker : Window
         _alphaPosition = pos;
     }
 
+    /// <inheritdoc />
     protected override void SetInitialSizeAndPosition()
     {
         // get position based on requested size and position, limited by screen space.
@@ -408,6 +453,7 @@ public class Dialog_ColourPicker : Window
         windowRect = new Rect( position.x, position.y, size.x, size.y );
     }
 
+    /// <inheritdoc />
     public override void PreOpen()
     {
         base.PreOpen();
@@ -416,6 +462,11 @@ public class Dialog_ColourPicker : Window
         _alphaPosition = curColour.a / UnitsPerPixel;
     }
 
+    /// <summary>
+    /// Converts a <see cref="Color"/> to a hex string in #RRGGBBAA format.
+    /// </summary>
+    /// <param name="col">The color to convert.</param>
+    /// <returns>The hex string representation (e.g. "#FF0000FF").</returns>
     public static string RGBtoHex( Color col )
     {
         int r = (int)Mathf.Clamp(col.r * 256f, 0, 255);
@@ -426,6 +477,12 @@ public class Dialog_ColourPicker : Window
         return "#" + r.ToString( "X2" ) + g.ToString( "X2" ) + b.ToString( "X2" ) + a.ToString( "X2" );
     }
 
+    /// <summary>
+    /// Attempts to parse a hex color string in #RRGGBB or #RRGGBBAA format.
+    /// </summary>
+    /// <param name="hex">The hex string to parse (must be 9 characters including '#').</param>
+    /// <param name="col">The parsed color, or <see cref="Color.white"/> on failure.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise <c>false</c>.</returns>
     public static bool TryGetColorFromHex( string hex, out Color col )
     {
         Color clr = new Color(0,0,0);
@@ -456,6 +513,7 @@ public class Dialog_ColourPicker : Window
         return false;
     }
 
+    /// <inheritdoc />
     public override void DoWindowContents( Rect inRect )
     {
         // set up rects
@@ -597,6 +655,7 @@ public class Dialog_ColourPicker : Window
         GUI.color = Color.white;
     }
 
+    /// <summary>Gets the initial window size, calculated to fit all picker elements.</summary>
     public override Vector2 InitialSize
     {
         get
